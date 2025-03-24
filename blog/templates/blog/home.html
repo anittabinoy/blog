@@ -1,0 +1,131 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+{% block title %}Welcome to Mini Blog{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section bg-gradient-primary text-white py-5 mb-5 rounded-3 shadow-lg position-relative overflow-hidden">
+    <div class="container position-relative z-index-1">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-2 fw-bold mb-3 animate__animated animate__fadeInUp">Welcome to Mini Blog</h1>
+                <p class="lead fs-3 mb-4 animate__animated animate__fadeInUp animate__delay-1s">Share your stories, ideas, and experiences with the world.</p>
+                {% if user.is_authenticated %}
+                    <div class="animate__animated animate__fadeInUp animate__delay-2s">
+                        <a href="{% url 'post_create' %}" class="btn btn-light btn-lg px-5 py-3 me-3">
+                            <i class="bi bi-pencil-square"></i> Create New Post
+                        </a>
+                        <a href="{% url 'blog' %}" class="btn btn-outline-light btn-lg px-5 py-3">
+                            <i class="bi bi-book"></i> Read Stories
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="animate__animated animate__fadeInUp animate__delay-2s">
+                        <a href="{% url 'register' %}" class="btn btn-light btn-lg px-5 py-3 me-3">
+                            <i class="bi bi-person-plus"></i> Join Now
+                        </a>
+                        <a href="{% url 'blog' %}" class="btn btn-outline-light btn-lg px-5 py-3">
+                            <i class="bi bi-book"></i> Start Reading
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- Decorative Elements -->
+    <div class="position-absolute top-50 end-0 translate-middle-y d-none d-xl-block">
+        <i class="bi bi-pencil-square display-1 text-white opacity-10"></i>
+    </div>
+    <div class="position-absolute bottom-0 start-0">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" class="opacity-25">
+            <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,133.3C672,139,768,181,864,181.3C960,181,1056,139,1152,122.7C1248,107,1344,117,1392,122.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container mb-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="bi bi-pencil-square display-4 text-primary"></i>
+                    </div>
+                    <h3 class="h4 mb-3">Share Your Stories</h3>
+                    <p class="text-muted mb-0">Create and publish your own blog posts with our easy-to-use editor.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="bi bi-people display-4 text-primary"></i>
+                    </div>
+                    <h3 class="h4 mb-3">Connect with Others</h3>
+                    <p class="text-muted mb-0">Engage with other writers and readers through comments and likes.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="bi bi-bookmark-heart display-4 text-primary"></i>
+                    </div>
+                    <h3 class="h4 mb-3">Discover Content</h3>
+                    <p class="text-muted mb-0">Explore diverse stories and perspectives from our community.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="container mb-5">
+    <div class="card bg-gradient-primary text-white border-0 shadow-lg">
+        <div class="card-body p-5 text-center">
+            <h2 class="display-5 mb-3">Ready to Start Writing?</h2>
+            <p class="lead mb-4">Join our community and share your unique perspective with the world.</p>
+            {% if user.is_authenticated %}
+                <a href="{% url 'post_create' %}" class="btn btn-light btn-lg px-5">
+                    <i class="bi bi-pencil-square"></i> Create Your First Post
+                </a>
+            {% else %}
+                <a href="{% url 'register' %}" class="btn btn-light btn-lg px-5">
+                    <i class="bi bi-person-plus"></i> Join Now
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+    }
+    .hero-section {
+        min-height: 500px;
+        display: flex;
+        align-items: center;
+    }
+    .feature-icon {
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .card {
+        border-radius: 15px;
+        transition: transform 0.3s ease;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+    }
+</style>
+
+<!-- Add this in your base template if not already present -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+{% endblock %} 

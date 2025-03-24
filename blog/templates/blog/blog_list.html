@@ -1,0 +1,152 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+{% block title %}Blog - Mini Blog{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Page Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 mb-3">Our Blog</h1>
+        <p class="lead text-muted">Discover all our stories, thoughts, and ideas</p>
+    </div>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            {% if posts %}
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                    {% for post in posts %}
+                    <div class="col">
+                        <article class="card h-100 border-0 shadow-sm hover-card">
+                            {% if post.image %}
+                            <div class="card-img-top position-relative">
+                                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid" style="height: 200px; object-fit: cover;">
+                                <div class="position-absolute bottom-0 start-0 p-3 w-100" style="background: linear-gradient(transparent, rgba(0,0,0,0.7));">
+                                    <h5 class="card-title mb-0">
+                                        <a href="{% url 'post_detail' post.slug %}" class="text-white text-decoration-none">{{ post.title }}</a>
+                                    </h5>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a href="{% url 'post_detail' post.slug %}" class="text-decoration-none text-dark">{{ post.title }}</a>
+                                </h5>
+                            {% endif %}
+                                <div class="card-body">
+                                    <div class="mb-3 text-muted small">
+                                        <div class="d-flex align-items-center">
+                                            {% if post.author.userprofile.profile_pic %}
+                                                <img src="{{ post.author.userprofile.profile_pic.url }}" class="rounded-circle me-2" width="24" height="24" style="object-fit: cover;">
+                                            {% else %}
+                                                <i class="bi bi-person-circle me-2"></i>
+                                            {% endif %}
+                                            {{ post.author }}
+                                            <span class="mx-2">•</span>
+                                            <i class="bi bi-calendar3"></i> {{ post.created_date|date:"M d, Y" }}
+                                        </div>
+                                    </div>
+                                    <p class="card-text">{{ post.content|safe|truncatewords:25 }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="stats small text-muted">
+                                            <span><i class="bi bi-heart-fill text-danger"></i> {{ post.total_likes }}</span>
+                                            <span class="ms-3"><i class="bi bi-chat-fill text-primary"></i> {{ post.comments.count }}</span>
+                                        </div>
+                                        <a href="{% url 'post_detail' post.slug %}" class="btn btn-sm btn-outline-primary">Read More</a>
+                                    </div>
+                                </div>
+                        </article>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <nav class="mt-5" aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                <i class="bi bi-chevron-left"></i> Previous
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                Next <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-journal-text display-1 text-muted mb-3"></i>
+                    <h3>No Posts Available</h3>
+                    <p class="text-muted">Check back later for new content!</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="position-sticky" style="top: 2rem;">
+                <!-- Recent Updates -->
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-body">
+                        <h5 class="card-title d-flex align-items-center mb-4">
+                            <i class="bi bi-clock-history me-2"></i>
+                            Recent Updates
+                        </h5>
+                        {% for post in recent_posts %}
+                        <div class="recent-post mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                            <a href="{% url 'post_detail' post.slug %}" class="text-decoration-none">
+                                <h6 class="mb-1 text-dark hover-title">{{ post.title }}</h6>
+                            </a>
+                            <div class="d-flex align-items-center text-muted small">
+                                <i class="bi bi-person-circle me-1"></i>
+                                <span>{{ post.author }}</span>
+                                <span class="mx-2">•</span>
+                                <i class="bi bi-calendar3 me-1"></i>
+                                <span>{{ post.created_date|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted">No recent posts</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-card {
+        transition: transform 0.3s ease;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+    }
+    .hover-title:hover {
+        color: #0d6efd !important;
+    }
+    .card {
+        border-radius: 15px;
+    }
+    .page-link {
+        border-radius: 8px;
+        margin: 0 2px;
+    }
+</style>
+{% endblock %} 

@@ -1,0 +1,208 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+{% block title %}Bloggers - Mini Blog{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- User's Profile Section -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    {% if user.userprofile.profile_pic %}
+                        <img src="{{ user.userprofile.profile_pic.url }}" 
+                             alt="{{ user.username }}" 
+                             class="rounded-circle mb-3"
+                             style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <div class="display-1 text-muted mb-3">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <h3 class="mb-2">{{ user.username }}</h3>
+                    {% if user.userprofile.bio %}
+                        <p class="text-muted mb-3">{{ user.userprofile.bio }}</p>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-center gap-4 mb-3">
+                        <div class="text-center">
+                            <h4 class="mb-0">{{ user_posts.count }}</h4>
+                            <small class="text-muted">Posts</small>
+                        </div>
+                        <div class="text-center">
+                            <h4 class="mb-0">{{ user_total_likes }}</h4>
+                            <small class="text-muted">Likes</small>
+                        </div>
+                    </div>
+                    
+                    <a href="{% url 'profile_edit' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-pencil-square"></i> Edit Profile
+                    </a>
+                </div>
+            </div>
+
+            <!-- User's Recent Posts -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Your Recent Posts</h5>
+                    {% for post in user_posts|slice:":3" %}
+                    <div class="mb-3 {% if not forloop.last %}border-bottom pb-3{% endif %}">
+                        <a href="{% url 'post_detail' post.slug %}" class="text-decoration-none">
+                            <h6 class="text-dark mb-1">{{ post.title }}</h6>
+                        </a>
+                        <small class="text-muted">
+                            <i class="bi bi-calendar3"></i> {{ post.created_date|date:"M d, Y" }}
+                            <span class="mx-2">•</span>
+                            <i class="bi bi-heart-fill text-danger"></i> {{ post.total_likes }}
+                        </small>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">You haven't created any posts yet.</p>
+                    <a href="{% url 'post_create' %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-circle"></i> Create First Post
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- All Bloggers Section -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Our Bloggers</h2>
+                    
+                    {% for blogger in bloggers %}
+                    <div class="d-flex align-items-center mb-4 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                        <div class="flex-shrink-0">
+                            {% if blogger.userprofile.profile_pic %}
+                                <img src="{{ blogger.userprofile.profile_pic.url }}" 
+                                     alt="{{ blogger.username }}" 
+                                     class="rounded-circle"
+                                     style="width: 64px; height: 64px; object-fit: cover;">
+                            {% else %}
+                                <div class="h2 text-muted">
+                                    <i class="bi bi-person-circle"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="flex-grow-1 ms-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-1">{{ blogger.username }}</h5>
+                                {% if user == blogger or user.is_staff %}
+                                <div class="dropdown">
+                                    <button class="btn btn-link text-muted" type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'blogger_edit' blogger.username %}">
+                                                <i class="bi bi-pencil"></i> Edit Profile
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <button type="button" class="dropdown-item text-danger" 
+                                                    data-bs-toggle="modal" data-bs-target="#deleteBloggerModal{{ blogger.id }}">
+                                                <i class="bi bi-trash"></i> Delete Account
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            {% if blogger.userprofile.bio %}
+                                <p class="text-muted small mb-2">{{ blogger.userprofile.bio|truncatechars:100 }}</p>
+                            {% endif %}
+                            
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-light text-dark me-2">
+                                    <i class="bi bi-file-text"></i> {{ blogger.post_count }} Posts
+                                </span>
+                                <span class="badge bg-light text-dark">
+                                    <i class="bi bi-heart-fill text-danger"></i> {{ blogger.total_likes|default:0 }} Likes
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Modal for each blogger -->
+                    <div class="modal fade" id="deleteBloggerModal{{ blogger.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title text-danger">Delete Account</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete the account for <strong>{{ blogger.username }}</strong>?</p>
+                                    <p class="text-danger"><small>This action cannot be undone. All posts and comments will be permanently deleted.</small></p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <form action="{% url 'blogger_delete' blogger.username %}" method="post" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Delete Account</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-people display-1 text-muted mb-3"></i>
+                        <h4>No Bloggers Found</h4>
+                        <p class="text-muted">Be the first to create a post!</p>
+                    </div>
+                    {% endfor %}
+
+                    {% if is_paginated %}
+                    <nav class="mt-4" aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                    <i class="bi bi-chevron-left"></i> Previous
+                                </a>
+                            </li>
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                    Next <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+    }
+    .badge {
+        padding: 0.5rem 1rem;
+        font-weight: normal;
+    }
+    .page-link {
+        border-radius: 8px;
+        margin: 0 2px;
+    }
+</style>
+{% endblock %} 

@@ -1,0 +1,120 @@
+{% extends 'blog/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Create Account - Mini Blog{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <!-- Logo/Brand -->
+                    <div class="text-center mb-4">
+                        <i class="bi bi-person-plus-fill display-1 text-primary mb-3"></i>
+                        <h1 class="h3 mb-3">Create Your Account</h1>
+                        <p class="text-muted">Join our community of writers and readers</p>
+                    </div>
+
+                    <!-- Alert Messages -->
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+
+                    <!-- Registration Form -->
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        {{ form|crispy }}
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 mb-4">
+                            <i class="bi bi-person-plus"></i> Create Account
+                        </button>
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="text-center mb-4">
+                        <span class="divider-text">Already have an account?</span>
+                    </div>
+
+                    <!-- Login Link -->
+                    <div class="text-center">
+                        <a href="{% url 'login' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-box-arrow-in-right"></i> Sign In
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="row mt-4 g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <i class="bi bi-pencil-square text-primary display-6 mb-3"></i>
+                            <h6>Share Stories</h6>
+                            <p class="small text-muted mb-0">Create and publish your own blog posts</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <i class="bi bi-people text-primary display-6 mb-3"></i>
+                            <h6>Join Community</h6>
+                            <p class="small text-muted mb-0">Connect with other writers and readers</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <i class="bi bi-heart text-primary display-6 mb-3"></i>
+                            <h6>Engage & Interact</h6>
+                            <p class="small text-muted mb-0">Like and comment on posts</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+    }
+    .form-control, .btn {
+        border-radius: 8px;
+    }
+    .form-control:focus {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+    .divider-text {
+        position: relative;
+        display: inline-block;
+        padding: 0 10px;
+        color: #6c757d;
+        background: #fff;
+    }
+    .divider-text::before,
+    .divider-text::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 100px;
+        height: 1px;
+        background: #dee2e6;
+    }
+    .divider-text::before {
+        right: 100%;
+    }
+    .divider-text::after {
+        left: 100%;
+    }
+</style>
+{% endblock %} 
